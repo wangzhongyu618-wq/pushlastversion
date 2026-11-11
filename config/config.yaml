@@ -181,7 +181,7 @@ storage:
 # ===============================================================
 ai:
   model: "deepseek/deepseek-v4-flash"  # 如果用的是官方标准接口且报错，可改为 "deepseek/deepseek-chat" 或 "gemini/gemini-2.5-flash"
-  api_key: ""                          # 👈 必填：在此填入你的 AI API Key
+  api_key: "sk-865f19d3b2f1475587de75f5fc41870a"                          # 👈 必填：在此填入你的 AI API Key
   api_base: ""
   timeout: 120
   temperature: 0.3                     # 调低至 0.3：让金融分析更严谨客观，减少AI胡思乱想
