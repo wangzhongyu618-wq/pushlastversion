@@ -126,7 +126,7 @@ notification:
 
   channels:
     feishu:
-      webhook_url: ""                  # 飞书机器人 webhook URL
+      webhook_url: "https://open.feishu.cn/open-apis/bot/v2/hook/997431e6-2e5e-4d91-bfe7-f18359ffc5b3"                  # 飞书机器人 webhook URL
     dingtalk:
       webhook_url: ""                  # 钉钉机器人 webhook URL
     wework:
