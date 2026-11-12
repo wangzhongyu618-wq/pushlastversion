@@ -1,6 +1,6 @@
 # ═══════════════════════════════════════════════════════════════
 #                    TrendRadar 配置文件 (炒股决策定制版)
-#                      Version: 2.4.0
+#                       Version: 2.4.0
 # ═══════════════════════════════════════════════════════════════
 
 # ===============================================================
@@ -11,11 +11,11 @@ app:
   show_version_update: true
 
 # ===============================================================
-# 1.5 调度系统 —— 贴合A股交易作息
+# 1.5 调度系统 —— 取消时段限制，实现及时推送
 # ===============================================================
 schedule:
-  enabled: true                        # 启用调度：按交易时段规律推送
-  preset: "office_hours"               # 工作日三段式（早盘前→午休→收盘复盘），周末增量推
+  enabled: false                       # 改为 false：取消固定时间段拦截，只要运行抓取到新消息就立刻推送
+  preset: "office_hours"
 
 # ===============================================================
 # 2. 数据源 - 热榜平台（已剔除娱乐八卦，纯化财经与宏观信息）
@@ -53,9 +53,9 @@ rss:
     max_age_days: 1                    # 严格只看24小时内的鲜活资讯
 
   feeds:
-    - id: "yahoo-finance"
-      name: "雅虎财经"
-      url: "https://finance.yahoo.com/news/rssindex"
+    - id: "cnbc-markets"
+      name: "CNBC美股市场"
+      url: "https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664"
 
     - id: "hacker-news"
       name: "Hacker News (全球科技/AI风向)"
@@ -80,7 +80,7 @@ report:
 # 4.5 筛选策略（启用AI语义理解，捕捉产业链上下游机会）
 # ===============================================================
 filter:
-  method: "ai"                         # 使用AI智能分类（需配合 config/ai_interests.txt）
+  method: "ai"                         # 使用AI智能分类（配合 config/ai_interests.txt）
   priority_sort_enabled: true          # 按你在 ai_interests.txt 中定义的板块顺序排列
 
 # ===============================================================
@@ -89,8 +89,8 @@ filter:
 ai_filter:
   batch_size: 200
   batch_interval: 2
-  min_score: 0.65                      # 0.65兼具敏锐度与准确率，防止漏掉早期题材信号
-  reclassify_threshold: 0.6
+  min_score: 0.50                      # 调整为 0.50：防止国内热榜相关盘面资讯被过度过滤
+  reclassify_threshold: 0.55
   prompt_file: "prompt.txt"
   extract_prompt_file: "extract_prompt.txt"
   update_tags_prompt_file: "update_tags_prompt.txt"
@@ -119,18 +119,18 @@ display:
     max_items: 15                                # 每个平台展示前15条核心快讯
 
 # ===============================================================
-# 6. 推送通知（⚠️ 请在下方填入你常用的1个推送渠道）
+# 6. 推送通知（留白由 GitHub Secrets 环境变量自动注入）
 # ===============================================================
 notification:
   enabled: true
 
   channels:
     feishu:
-      webhook_url: "https://open.feishu.cn/open-apis/bot/v2/hook/997431e6-2e5e-4d91-bfe7-f18359ffc5b3"                  # 飞书机器人 webhook URL
+      webhook_url: ""                  # 留白即可，程序会自动读取 GitHub Secrets 中的 FEISHU_WEBHOOK_URL
     dingtalk:
-      webhook_url: ""                  # 钉钉机器人 webhook URL
+      webhook_url: ""
     wework:
-      webhook_url: ""                  # 企业微信机器人 webhook URL
+      webhook_url: ""
       msg_type: "markdown"
     telegram:
       bot_token: ""
@@ -146,7 +146,7 @@ notification:
       topic: ""
       token: ""
     bark:
-      url: ""                          # iOS 推荐用 Bark，看盘推送最快
+      url: ""
     slack:
       webhook_url: ""
     generic_webhook:
@@ -177,14 +177,14 @@ storage:
     days: 7
 
 # ===============================================================
-# 8. AI 模型配置（⚠️ 请填入你的 API Key）
+# 8. AI 模型配置（留白由 GitHub Secrets 环境变量自动注入）
 # ===============================================================
 ai:
-  model: "deepseek/deepseek-v4-flash"  # 如果用的是官方标准接口且报错，可改为 "deepseek/deepseek-chat" 或 "gemini/gemini-2.5-flash"
-  api_key: "sk-865f19d3b2f1475587de75f5fc41870a"                          # 👈 必填：在此填入你的 AI API Key
+  model: "deepseek/deepseek-chat"      # 默认兜底模型，若 Secrets 已配置 AI_MODEL 则以 Secrets 为准
+  api_key: ""                          # 留白即可，程序会自动读取 GitHub Secrets 中的 AI_API_KEY
   api_base: ""
   timeout: 120
-  temperature: 0.3                     # 调低至 0.3：让金融分析更严谨客观，减少AI胡思乱想
+  temperature: 0.3                     # 调低至 0.3：让金融分析更严谨客观
   max_tokens: 5000
   num_retries: 2
   fallback_models: []
@@ -198,7 +198,7 @@ ai_analysis:
   prompt_file: "ai_analysis_prompt.txt"
   mode: "follow_report"
   max_news_for_analysis: 150
-  include_rss: true                    # 开启：将雅虎财经/海外科技动态一并交给AI做A股映射分析
+  include_rss: true                    # 开启：将海外财经与科技动态一并交给AI做A股映射分析
   include_standalone: true             # 开启：确保财联社与华尔街见闻的全量头条参与AI复盘
   include_rank_timeline: true          # 开启：让AI通过热搜排名变化判断题材是在“升温”还是“退潮”
 
@@ -213,7 +213,7 @@ ai_translation:
   batch_interval: 2
   scope:
     hotlist: false
-    rss: true                          # 自动将雅虎财经和 Hacker News 英文标题翻译为中文
+    rss: true                          # 自动将 CNBC 和 Hacker News 英文标题翻译为中文
     standalone: false
 
 # ===============================================================
