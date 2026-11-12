@@ -180,11 +180,11 @@ storage:
 # 8. AI 模型配置（留白由 GitHub Secrets 环境变量自动注入）
 # ===============================================================
 ai:
-  model: "deepseek/deepseek-chat"      # 默认兜底模型，若 Secrets 已配置 AI_MODEL 则以 Secrets 为准
-  api_key: ""                          # 留白即可，程序会自动读取 GitHub Secrets 中的 AI_API_KEY
-  api_base: ""
+  model: "openai/glm-4-flash"                      # 智谱永久免费模型名称
+  api_key: "58ee8ef517d0402f98c3f318e8062ca2.0Cby37ILwvXiyjZL"                                      # 务必留白，通过下方 Secrets 注入
+  api_base: "https://open.bigmodel.cn/api/paas/v4" # 智谱官方 OpenAI 兼容地址（纯文本，勿带括号）
   timeout: 120
-  temperature: 0.3                     # 调低至 0.3：让金融分析更严谨客观
+  temperature: 0.3
   max_tokens: 5000
   num_retries: 2
   fallback_models: []
