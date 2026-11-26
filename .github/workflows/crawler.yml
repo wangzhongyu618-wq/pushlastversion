@@ -80,7 +80,7 @@ jobs:
           S3_ENDPOINT_URL: ${{ secrets.S3_ENDPOINT_URL }}
           S3_REGION: ${{ secrets.S3_REGION }}
           GITHUB_ACTIONS: true
-        run: timeout 180 uv run python -u -m trendradar
+        run: uv run python -u -m trendradar
 
       - name: Check Cloudflare config
         if: success()
