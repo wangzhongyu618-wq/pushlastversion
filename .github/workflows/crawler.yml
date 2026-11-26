@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
   actions: write
 
 jobs:
@@ -51,6 +51,7 @@ jobs:
       - name: Run crawler
         if: success()
         env:
+          PYTHONUNBUFFERED: "1"
           FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
@@ -79,7 +80,7 @@ jobs:
           S3_ENDPOINT_URL: ${{ secrets.S3_ENDPOINT_URL }}
           S3_REGION: ${{ secrets.S3_REGION }}
           GITHUB_ACTIONS: true
-        run: uv run python -m trendradar
+        run: timeout 180 uv run python -u -m trendradar
 
       - name: Check Cloudflare config
         if: success()
@@ -115,11 +116,3 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy cloudflare_dist --project-name=${{ secrets.CLOUDFLARE_PROJECT_NAME }}
-
-      - name: Auto Keep Alive
-        if: always()
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit --allow-empty -m "chore: keep alive"
-          git push
